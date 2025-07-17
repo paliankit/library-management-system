@@ -1,11 +1,17 @@
 package com.demo.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
-@Table
+@Table(name="book")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
 
     @Id
@@ -18,7 +24,7 @@ public class Book {
 
     private String isbn;
 
-    private LocalDate publishedDate;
+    private String publishedDate;
 
 
 }

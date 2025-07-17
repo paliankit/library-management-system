@@ -1,15 +1,20 @@
 package com.demo.controller;
 
 import com.demo.model.Book;
+import com.demo.service.LibraryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController("/v1/libraryManagement")
 public class LibraryController {
 
-    @PostMapping("/create")
-    public void createBook(@RequestBody Book book){
+    @Autowired
+    private LibraryService libraryService;
 
+    @PostMapping("/createBook")
+    public void createBook(@RequestBody Book book){
+         libraryService.createBook(book);
     }
 }
