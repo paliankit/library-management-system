@@ -18,7 +18,7 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    private long id;
 
     @NotBlank(message ="Title is required")
     @Column(nullable = false)
