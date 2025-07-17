@@ -1,4 +1,4 @@
-package com.demo.exception;
+package com.demo.library.management.exception;
 
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;

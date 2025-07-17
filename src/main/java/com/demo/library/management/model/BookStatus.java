@@ -1,4 +1,4 @@
-package com.demo.model;
+package com.demo.library.management.model;
 
 public enum BookStatus {
 

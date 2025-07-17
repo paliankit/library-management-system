@@ -1,7 +1,9 @@
-package com.demo.controller;
+package com.demo.library.management.controller;
 
-import com.demo.model.Book;
-import com.demo.service.LibraryService;
+import com.demo.library.management.dto.BookRequestDTO;
+import com.demo.library.management.dto.BookResponseDTO;
+import com.demo.library.management.model.Book;
+import com.demo.library.management.service.LibraryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,12 @@ public class LibraryController {
     @Autowired
     private LibraryService libraryService;
 
+    //public ResponseEntity
+
     @PostMapping("/books")
-    public ResponseEntity<String> createBook(@RequestBody @Valid Book book){
-        System.out.println("Received book: " + book);
-         libraryService.createBook(book);
-         return ResponseEntity.status(HttpStatus.CREATED).body("Book created successfully");
+    public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO bookRequest){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(libraryService.createBook(bookRequest));
     }
 }

@@ -1,4 +1,4 @@
-package com.demo;
+package com.demo.library.management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

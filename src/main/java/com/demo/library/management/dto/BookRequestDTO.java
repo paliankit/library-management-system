@@ -1,41 +1,31 @@
-package com.demo.model;
+package com.demo.library.management.dto;
 
-
-import jakarta.persistence.*;
+import com.demo.library.management.model.BookStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name="book")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class BookRequestDTO {
 
     @NotBlank(message ="Title is required")
-    @Column(nullable = false)
     private String title;
 
     @NotBlank(message ="Author is required")
-    @Column(nullable = false)
     private String author;
 
-    @Column(unique = true)
+    @NotBlank(message ="ISBN is required")
     private String isbn;
 
     private LocalDate publishedDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotNull(message = "Status is required")
     private BookStatus status;
-
-
 }
+

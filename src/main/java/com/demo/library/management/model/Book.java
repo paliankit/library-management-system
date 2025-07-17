@@ -1,0 +1,39 @@
+package com.demo.library.management.model;
+
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name="book")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String author;
+
+    @Column(unique = true)
+    private String isbn;
+
+    private LocalDate publishedDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookStatus status;
+
+
+}
