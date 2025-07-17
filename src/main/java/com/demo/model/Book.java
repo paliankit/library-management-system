@@ -31,7 +31,7 @@ public class Book {
     @Column(unique = true)
     private String isbn;
 
-    private String publishedDate;
+    private LocalDate publishedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
