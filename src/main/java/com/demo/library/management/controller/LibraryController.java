@@ -9,9 +9,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/library")
@@ -59,5 +61,19 @@ public class LibraryController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         return ResponseEntity.ok(libraryService.getBooksPublishedAfter(date));
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<String> importFromCsv(@RequestParam("file") MultipartFile file){
+         String type=file.getContentType();
+         if(!Objects.equals(type,"text/csv")){
+             return ResponseEntity.badRequest().body("Only csv files are supported !!!");
+         }
+         try{
+             libraryService.saveBooksFromCsv(file.getInputStream());
+             return ResponseEntity.ok().body("Books imported successfully !");
+         }catch(Exception e){
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Importing csv: " + e.getMessage());
+         }
     }
 }

@@ -7,9 +7,11 @@ import com.demo.library.management.mapper.BookMapper;
 import com.demo.library.management.model.Book;
 import com.demo.library.management.model.BookStatus;
 import com.demo.library.management.repository.BookRepository;
+import com.demo.library.management.utility.CsvHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,5 +82,10 @@ public class LibraryServiceImpl implements LibraryService {
                 .filter(book -> book.getPublishedDate() != null && book.getPublishedDate().isAfter(date))
                 .map(bookMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void saveBooksFromCsv(InputStream inputStream){
+        List<Book> books=new CsvHelper().parseCsvToBooks(inputStream);
+        bookRepository.saveAll(books);
     }
 }

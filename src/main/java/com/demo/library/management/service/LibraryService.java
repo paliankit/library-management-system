@@ -3,6 +3,7 @@ package com.demo.library.management.service;
 import com.demo.library.management.dto.BookRequestDTO;
 import com.demo.library.management.dto.BookResponseDTO;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface LibraryService {
     public BookResponseDTO updateBook(Long id, BookRequestDTO updatedBook);
     public void deleteBook(Long id);
     public List<BookResponseDTO> getBooksPublishedAfter(LocalDate date);
+    public void saveBooksFromCsv(InputStream inputStream);
 }
