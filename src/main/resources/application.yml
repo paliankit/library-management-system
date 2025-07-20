@@ -10,3 +10,20 @@ spring:
         spring.json.trusted.packages: com.demo.library.management.model
     listener:
       missing-topics-fatal: false
+
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+info:
+  app:
+    name: Library ms
+    description: microservice to manage Book records
+    version: 1.0

@@ -3,6 +3,8 @@ package com.demo.library.management.controller;
 import com.demo.library.management.dto.BookRequestDTO;
 import com.demo.library.management.dto.BookResponseDTO;
 import com.demo.library.management.service.LibraryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,11 +19,13 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/library")
+@Tag(name = "Books", description = "Book CRUD operations")
 public class LibraryController {
 
     @Autowired
     private LibraryService libraryService;
 
+    @Operation(summary = "Get all books")
     @GetMapping("/books")
     public ResponseEntity<List<BookResponseDTO>> getAllBooks(
             @RequestParam(required = false) String author,
@@ -30,11 +34,13 @@ public class LibraryController {
         return ResponseEntity.ok(libraryService.getAllBooksFiltered(author, status));
     }
 
+    @Operation(summary = "Get book by id")
     @GetMapping("/books/{id}")
     public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(libraryService.getBookById(id));
     }
 
+    @Operation(summary = "Add a new book")
     @PostMapping("/books")
     public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO bookRequest){
         return ResponseEntity
@@ -42,6 +48,7 @@ public class LibraryController {
                 .body(libraryService.createBook(bookRequest));
     }
 
+    @Operation(summary = "Update book details")
     @PutMapping("/books/{id}")
     public ResponseEntity<BookResponseDTO> updateBook(
             @PathVariable Long id,
@@ -50,12 +57,14 @@ public class LibraryController {
         return ResponseEntity.ok(libraryService.updateBook(id, updatedBook));
     }
 
+    @Operation(summary = "Delete book by id")
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         libraryService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Get all books publisehed after the mentioned date")
     @GetMapping("/books/publishedAfter")
     public ResponseEntity<List<BookResponseDTO>> getBooksPublishedAfter(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
@@ -63,6 +72,7 @@ public class LibraryController {
         return ResponseEntity.ok(libraryService.getBooksPublishedAfter(date));
     }
 
+    @Operation(summary = "import books from a csv file")
     @PostMapping("/import")
     public ResponseEntity<String> importFromCsv(@RequestParam("file") MultipartFile file){
          String type=file.getContentType();
