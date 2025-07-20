@@ -21,6 +21,11 @@ public class CsvHelper {
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             CSVReader csvReader=new CSVReader(bufferedReader);
             String[] header=csvReader.readNext();
+            for(int i=0;i<header.length;i++){
+                if(header[i].isEmpty()){
+                   throw new RuntimeException("Headers cannot be empty !!");
+                }
+            }
             String[] line;
             while((line=csvReader.readNext())!=null){
                 Book book=new Book();
