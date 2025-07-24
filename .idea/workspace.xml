@@ -7,6 +7,7 @@
     <list default="true" id="746225ed-afdb-4cad-a3be-353246785485" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/demo/library/management/config/RedisConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/demo/library/management/config/RedisConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +53,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.LibraryManagementApplication.executor": "Run",
-    "Application.com.demo.library.management.LibraryManagementApplication.executor": "Debug",
+    "Application.com.demo.library.management.LibraryManagementApplication.executor": "Run",
     "JUnit.LibraryControllerTest.executor": "Run",
     "JUnit.LibraryControllerTest.testGetBookByIdSuccess.executor": "Run",
     "JUnit.LibraryControllerTest.testUpdateBookSuccess.executor": "Run",
