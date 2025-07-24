@@ -9,9 +9,11 @@ import com.demo.library.management.model.BookStatus;
 import com.demo.library.management.repository.BookRepository;
 import com.demo.library.management.utility.CsvHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,13 @@ public class LibraryServiceImpl implements LibraryService {
     @Autowired
     private BookMapper bookMapper;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    private static final String BOOK_KEY = "book:";
+    private static final String BOOK_LIST_KEY = "book:list";
+    Duration ttl = Duration.ofMinutes(30);
+
     public BookResponseDTO createBook(BookRequestDTO dto){
         Book entity = bookMapper.toEntity(dto);
         Book saved = bookRepository.save(entity);
@@ -32,9 +41,15 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     public List<BookResponseDTO> getAllBooksFiltered(String author, String status) {
+        String redisKey=BOOK_LIST_KEY+ (author!=null?author:"")+(status!=null?status:"");
+        List<BookResponseDTO> cachedResponse=(List<BookResponseDTO>) redisTemplate.opsForValue().get(redisKey);
+        if(cachedResponse!=null){
+            return cachedResponse;
+        }
+
         List<Book> books = bookRepository.findAll();
 
-        return books.stream()
+        List<BookResponseDTO> databaseResponse= books.stream()
                 .filter(book -> author == null || book.getAuthor().equalsIgnoreCase(author))
                 .filter(book -> {
                     if (status == null) return true;
@@ -46,17 +61,32 @@ public class LibraryServiceImpl implements LibraryService {
                 })
                 .map(bookMapper::toDTO)
                 .collect(Collectors.toList());
+
+        redisTemplate.opsForValue().set(redisKey,databaseResponse,ttl);
+        return databaseResponse;
     }
 
     @Override
     public BookResponseDTO getBookById(Long id) {
+        String redisKey= BOOK_KEY +id;
+
+        BookResponseDTO cachedBook = (BookResponseDTO) redisTemplate.opsForValue().get(redisKey);
+        if(cachedBook!=null){
+            return cachedBook;
+        }
+
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
-        return bookMapper.toDTO(book);
+        BookResponseDTO response= bookMapper.toDTO(book);
+
+        redisTemplate.opsForValue().set(redisKey,response,ttl);
+        return response;
     }
 
     @Override
     public BookResponseDTO updateBook(Long id, BookRequestDTO updatedBookDTO) {
+        String redisKey=BOOK_KEY+id;
+
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
 
@@ -67,7 +97,11 @@ public class LibraryServiceImpl implements LibraryService {
         existingBook.setStatus(updatedBookDTO.getStatus());
 
         Book updated = bookRepository.save(existingBook);
-        return bookMapper.toDTO(updated);
+        BookResponseDTO response= bookMapper.toDTO(updated);
+
+        redisTemplate.opsForValue().set(redisKey,response,ttl);
+        redisTemplate.delete(redisTemplate.keys(BOOK_LIST_KEY+"*"));
+        return response;
     }
 
     public void deleteBook(Long id) {
@@ -75,6 +109,8 @@ public class LibraryServiceImpl implements LibraryService {
             throw new BookNotFoundException("Book not found with id: " + id);
         }
         bookRepository.deleteById(id);
+        redisTemplate.delete(BOOK_KEY + id);
+        redisTemplate.delete(redisTemplate.keys(BOOK_LIST_KEY + "*"));
     }
 
     public List<BookResponseDTO> getBooksPublishedAfter(LocalDate date) {
