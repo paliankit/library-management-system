@@ -17,7 +17,7 @@ public class RedisConfig {
 
         GenericJackson2JsonRedisSerializer serializer=new GenericJackson2JsonRedisSerializer();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setKeySerializer(serializer);
+        redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(serializer);
         redisTemplate.afterPropertiesSet();
