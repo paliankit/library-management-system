@@ -9,6 +9,7 @@ import com.demo.library.management.model.BookStatus;
 import com.demo.library.management.repository.BookRepository;
 import com.demo.library.management.utility.CsvHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -69,17 +70,23 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public BookResponseDTO getBookById(Long id) {
         String redisKey= BOOK_KEY +id;
-
-        BookResponseDTO cachedBook = (BookResponseDTO) redisTemplate.opsForValue().get(redisKey);
-        if(cachedBook!=null){
-            return cachedBook;
+        try {
+            BookResponseDTO cachedBook = (BookResponseDTO) redisTemplate.opsForValue().get(redisKey);
+            if (cachedBook != null) {
+                return cachedBook;
+            }
+        }catch(RedisConnectionFailureException e){
+            System.out.println("WARNING - Client is not able to connect to redis cache, falling back to DB");
         }
 
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
         BookResponseDTO response= bookMapper.toDTO(book);
-
-        redisTemplate.opsForValue().set(redisKey,response,ttl);
+        try {
+            redisTemplate.opsForValue().set(redisKey, response, ttl);
+        }catch(RedisConnectionFailureException e){
+            System.out.println("Could not cache data in redis right now");
+        }
         return response;
     }
 
