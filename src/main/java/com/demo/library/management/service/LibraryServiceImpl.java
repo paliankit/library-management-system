@@ -43,9 +43,13 @@ public class LibraryServiceImpl implements LibraryService {
 
     public List<BookResponseDTO> getAllBooksFiltered(String author, String status) {
         String redisKey=BOOK_LIST_KEY+ (author!=null?author:"")+(status!=null?status:"");
-        List<BookResponseDTO> cachedResponse=(List<BookResponseDTO>) redisTemplate.opsForValue().get(redisKey);
-        if(cachedResponse!=null){
-            return cachedResponse;
+        try {
+            List<BookResponseDTO> cachedResponse = (List<BookResponseDTO>) redisTemplate.opsForValue().get(redisKey);
+            if (cachedResponse != null) {
+                return cachedResponse;
+            }
+        }catch(RedisConnectionFailureException e){
+            System.out.println("WARNING - Client is not able to connect to redis cache, falling back to DB");
         }
 
         List<Book> books = bookRepository.findAll();
